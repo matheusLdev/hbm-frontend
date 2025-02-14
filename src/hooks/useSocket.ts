@@ -18,7 +18,7 @@ export function useSocket() {
     });
 
     socket.on("receiveHistory", (data: Irregularity[]) => {
-      setHistory(data);
+      setHistory(data.reverse());
     });
 
     socket.emit("requestHistory");
