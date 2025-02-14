@@ -5,7 +5,6 @@ import "./styles.css"
 export function Monitor() {
   useHeartRate();
   const { heartBeat, alert, history } = useSocket();
-  console.log(history)
 
   return (
     <div className="monitor">
