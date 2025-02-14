@@ -18,16 +18,26 @@ export function useSocket() {
     });
 
     socket.on("receiveHistory", (data: Irregularity[]) => {
-      setHistory(data.reverse());
+      setHistory((prevHistory) => {
+        const updatedHistory = [...data, ...prevHistory];
+        const sortedHistory = updatedHistory.sort((a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime());
+        return sortedHistory.slice(0, 60);
+      });
     });
-
-    socket.emit("requestHistory");
 
     return () => {
       socket.off("receiveHeartbeat");
       socket.off("receiveAlert");
       socket.off("receiveHistory");
     };
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      socket.emit("requestHistory");
+    }, 1000);
+  
+    return () => clearInterval(interval);
   }, []);
 
   return { heartBeat, alert, history };
